@@ -72,8 +72,8 @@ dependencies {
     // Lifecycle
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.2")
 
-    // FFmpeg Kit — полная версия для обработки видео
-    implementation("com.arthenica:ffmpeg-kit-full:6.0-2")
+    // FFmpeg Kit — рабочая версия с Maven Central (форк с полной поддержкой GPL)
+    implementation("com.antonkarpenko:ffmpeg-kit-full-gpl:2.1.0")
 
     // Debug-инструменты Compose
     debugImplementation("androidx.compose.ui:ui-tooling")
