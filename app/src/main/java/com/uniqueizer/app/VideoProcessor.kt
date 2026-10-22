@@ -61,15 +61,22 @@ class VideoProcessor(private val context: Context) {
         onComplete: (Boolean, String) -> Unit
     ) = withContext(Dispatchers.IO) {
         try {
-            // 1. Копируем исходное видео во временный файл
+            // 1. Копируем исходное видео во временный файл кэша, чтобы FFmpeg имел полноценный seek-доступ
             withContext(Dispatchers.Main) {
-                onProgress(0.05f, "Копирование исходного файла...")
+                onProgress(0.05f, "Чтение файла из галереи...")
             }
 
-            val inputSafUri = FFmpegKitConfig.getSafParameterForRead(context, inputUri)
             val tempDir = File(context.cacheDir, "uniqueizer")
             tempDir.mkdirs()
+            val tempInput = File(tempDir, "input_${System.currentTimeMillis()}.mp4")
             val tempOutput = File(tempDir, "unique_${System.currentTimeMillis()}.mp4")
+
+            // Копируем поток из ContentResolver в локальный файл
+            context.contentResolver.openInputStream(inputUri)?.use { input ->
+                tempInput.outputStream().use { output ->
+                    input.copyTo(output, bufferSize = 64 * 1024)
+                }
+            } ?: throw IllegalStateException("Не удалось открыть исходное видео")
 
             // 2. Генерация случайных параметров уникализации
             val speed = 1.05 + Random.nextDouble() * 0.05        // 1.05x – 1.10x
@@ -119,7 +126,7 @@ class VideoProcessor(private val context: Context) {
             // -fflags +bitexact  — убирает технические метки
             // -movflags +faststart — оптимизация для стриминга
             val ffmpegCommand = buildString {
-                append("-i $inputSafUri ")
+                append("-i \"${tempInput.absolutePath}\" ")
                 append("-vf \"$videoFilters\" ")
                 append("-af \"$audioFilter\" ")
                 append("-map_metadata -1 ")
@@ -129,12 +136,11 @@ class VideoProcessor(private val context: Context) {
                 append("-movflags +faststart ")
                 append("-c:v libx264 -preset medium -crf 23 ")
                 append("-c:a aac -b:a 128k ")
-                append("-y ${tempOutput.absolutePath}")
+                append("-y \"${tempOutput.absolutePath}\"")
             }
 
             // 4. Получаем длительность для расчёта прогресса
-            // Используем SAF-путь для probe тоже
-            val durationMs = getVideoDurationMs(inputSafUri)
+            val durationMs = getVideoDurationMs(tempInput.absolutePath)
             val adjustedDurationMs = if (durationMs > 0) (durationMs / speed).toLong() else 0L
 
             withContext(Dispatchers.Main) {
@@ -164,6 +170,7 @@ class VideoProcessor(private val context: Context) {
             val hash = computeFileHash(tempOutput)
 
             // 8. Очистка временных файлов
+            tempInput.delete()
             tempOutput.delete()
 
             withContext(Dispatchers.Main) {
