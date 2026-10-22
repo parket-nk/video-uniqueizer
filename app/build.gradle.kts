@@ -72,8 +72,11 @@ dependencies {
     // Lifecycle
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.2")
 
-    // FFmpeg Kit — рабочая версия с Maven Central (форк с полной поддержкой GPL)
-    implementation("com.antonkarpenko:ffmpeg-kit-full-gpl:2.1.0")
+    // FFmpeg Kit — AAR загружается из GitHub releases в CI-пайплайне
+    implementation(name = "ffmpeg-kit-full-gpl-6.0-2", ext = "aar")
+    // Зависимости ffmpeg-kit (smart-exception) — ещё доступны на Maven Central
+    implementation("com.arthenica:smart-exception-java:0.2.1")
+    implementation("com.arthenica:smart-exception-common:0.2.1")
 
     // Debug-инструменты Compose
     debugImplementation("androidx.compose.ui:ui-tooling")

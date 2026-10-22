@@ -11,6 +11,10 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        // Локальный репозиторий для ffmpeg-kit AAR (загружается в CI)
+        flatDir {
+            dirs("app/libs")
+        }
     }
 }
 
