@@ -73,8 +73,8 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.2")
 
     // FFmpeg Kit — AAR загружается из GitHub releases в CI-пайплайне
-    implementation(name = "ffmpeg-kit-full-gpl-6.0-2", ext = "aar")
-    // Зависимости ffmpeg-kit (smart-exception) — ещё доступны на Maven Central
+    implementation(name = "ffmpeg-kit", ext = "aar")
+    // Зависимости ffmpeg-kit (smart-exception) — доступны на Maven Central
     implementation("com.arthenica:smart-exception-java:0.2.1")
     implementation("com.arthenica:smart-exception-common:0.2.1")
 

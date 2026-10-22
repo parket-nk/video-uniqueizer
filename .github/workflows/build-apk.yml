@@ -30,10 +30,10 @@ jobs:
       - name: Download ffmpeg-kit AAR
         run: |
           mkdir -p app/libs
-          echo "Скачиваем ffmpeg-kit-full-gpl-6.0-2.aar из GitHub Releases..."
-          curl -L -f -o app/libs/ffmpeg-kit-full-gpl-6.0-2.aar \
-            "https://github.com/arthenica/ffmpeg-kit/releases/download/v6.0-2/ffmpeg-kit-full-gpl-6.0-2.aar"
-          echo "Размер AAR: $(stat -c%s app/libs/ffmpeg-kit-full-gpl-6.0-2.aar) байт"
+          echo "Скачиваем ffmpeg-kit AAR (16KB page-aligned, LTS Full GPL)..."
+          curl -L -f -o app/libs/ffmpeg-kit.aar \
+            "https://github.com/VineshChauhan24/ffmpeg-kit-android-16kb-lts-full-gpl/releases/download/v1.0.7/ffmpeg-kit-android-lib-release.aar"
+          echo "Размер AAR: $(stat -c%s app/libs/ffmpeg-kit.aar) байт"
 
       - name: Accept Android SDK licenses
         run: |
